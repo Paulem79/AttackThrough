@@ -1,0 +1,5 @@
+# The player reach from his position to the entity position
+reach: 4
+
+# The raysize to find the entity behind, modify this if you're sure of what you are doing
+raySize: 0.25

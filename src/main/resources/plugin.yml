@@ -1,0 +1,4 @@
+main: io.github.paulem.attackthrough.AttackThrough
+name: AttackThrough
+version: 1.0
+api-version: 1.13
