@@ -23,7 +23,7 @@ import org.jetbrains.annotations.Nullable;
 public final class AttackThrough extends JavaPlugin implements Listener {
     private FileConfiguration config;
     private final int DEFAULT_REACH = 4;
-    private final double DEFAULT_RAY_SIZE = 0.25;
+    private final double DEFAULT_RAY_SIZE = 0.2;
 
     @Override
     public void onEnable() {
@@ -33,6 +33,11 @@ public final class AttackThrough extends JavaPlugin implements Listener {
         config = getConfig();
 
         getLogger().info("Enabled !");
+    }
+
+    @Override
+    public void onDisable() {
+        getLogger().info("Disabled !");
     }
 
     @EventHandler
