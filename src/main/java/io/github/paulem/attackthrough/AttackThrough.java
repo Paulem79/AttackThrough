@@ -7,6 +7,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.enchantments.EnchantmentTarget;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -29,6 +30,7 @@ public final class AttackThrough extends JavaPlugin implements Listener {
     public void onEnable() {
         getServer().getPluginManager().registerEvents(this, this);
 
+        // Save the default config and get it
         saveDefaultConfig();
         config = getConfig();
 
@@ -44,11 +46,16 @@ public final class AttackThrough extends JavaPlugin implements Listener {
     public void onPlayerInteract(PlayerInteractEvent event) {
         if(event.getAction() != Action.LEFT_CLICK_BLOCK) return;
 
+        // Get the block that the player clicked
         Block clickedBlock = event.getClickedBlock();
         if(clickedBlock == null) return;
 
+        // Get the item in the player's hand, if there is none, set it as air
         @Nullable ItemStack itemInHand = event.getItem();
         if(itemInHand == null) itemInHand = new ItemStack(Material.AIR);
+
+        // If the config is set to only allow the attack through for tools, and the item in hand is not a tool, return
+        if(config.getBoolean("onlyForTools", false) && !EnchantmentTarget.TOOL.includes(itemInHand)) return;
 
         if (clickedBlock.isPassable() && !clickedBlock.getType().isInteractable())
         {
@@ -57,14 +64,18 @@ public final class AttackThrough extends JavaPlugin implements Listener {
             Location clickedBlockLoc = clickedBlock.getLocation();
             Location playerEyeLoc = player.getEyeLocation();
 
-            final RayTraceResult result = clickedBlock.getWorld().rayTraceEntities(clickedBlockLoc, playerEyeLoc.getDirection(), Doubles.constrainToRange(config.getInt("reach", DEFAULT_REACH) - clickedBlockLoc.distance(playerEyeLoc), 0, config.getInt("reach", DEFAULT_REACH)), config.getDouble("raySize", DEFAULT_RAY_SIZE), entity -> entity instanceof Damageable);
+            final RayTraceResult result = clickedBlock.getWorld().rayTraceEntities(clickedBlockLoc,
+                    playerEyeLoc.getDirection(),
+                    Doubles.constrainToRange(config.getInt("reach", DEFAULT_REACH) - clickedBlockLoc.distance(playerEyeLoc), 0, config.getInt("reach", DEFAULT_REACH)),
+                    config.getDouble("raySize", DEFAULT_RAY_SIZE), entity -> entity instanceof Damageable);
             if(result == null) return;
 
             Entity hitEntity = result.getHitEntity();
-            if (hitEntity != null)
+            // If there is an entity behind the block, and it's not the player himself, attack it
+            if (hitEntity != null && !hitEntity.equals(player))
             {
+                // If the player is holding a sword, play the attack animation
                 final boolean sweepin = isSword(itemInHand);
-
                 if(sweepin) player.swingMainHand();
 
                 // If the player doesn't have an active cooldown, attack the entity behind the block
@@ -81,8 +92,8 @@ public final class AttackThrough extends JavaPlugin implements Listener {
                 }
 
                 // Get the amount of ticks for the tool reload based on his attack speed, and put it as cooldown
-                int ticksFor = getTicksFor(itemAttackSpeed);
-                player.setCooldown(itemInHand.getType(), ticksFor);
+                int ticks = getAttackSpeedTicks(itemAttackSpeed);
+                player.setCooldown(itemInHand.getType(), ticks);
 
                 // Cancel the block interaction (basically the break)
                 event.setCancelled(true);
@@ -90,10 +101,12 @@ public final class AttackThrough extends JavaPlugin implements Listener {
         }
     }
 
-    public static int getTicksFor(@NotNull Double attackSpeed) {
+    // Get the amount of ticks for the tool reload based on his attack speed
+    public static int getAttackSpeedTicks(@NotNull Double attackSpeed) {
         return (int) (20 / attackSpeed);
     }
 
+    // Check if the item is a sword
     public static boolean isSword(@Nullable ItemStack is){
         return is != null && is.getType().name().contains("SWORD");
     }

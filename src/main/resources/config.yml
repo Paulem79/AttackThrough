@@ -3,3 +3,6 @@ reach: 4
 
 # The raysize to find the entity behind. Modify this if you're sure of what you are doing
 raySize: 0.2
+
+# "true" if the plugin only affect tools, false for everything
+onlyForTools: false
