@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.15.2-R0.1-SNAPSHOT")
-    compileOnly("com.google.guava:guava:33.4.7-android")
+    compileOnly("com.google.guava:guava:33.4.7-jre")
     compileOnly("org.jetbrains:annotations:26.0.2")
 }
 
