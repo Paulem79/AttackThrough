@@ -3,7 +3,7 @@ import ovh.paulem.buildscript.NewGithubChangelog
 plugins {
     id("java")
 
-    id("com.modrinth.minotaur") version "2.8.7"
+    id("com.modrinth.minotaur") version "2.8.10"
 }
 
 group = "io.github.paulem.attackthrough"
