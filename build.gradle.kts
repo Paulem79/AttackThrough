@@ -54,8 +54,6 @@ tasks.register<Task>("changelog") {
 tasks.build {
     mustRunAfter(tasks.clean)
     dependsOn(tasks.clean)
-
-    dependsOn(tasks.build)
 }
 
 java {
