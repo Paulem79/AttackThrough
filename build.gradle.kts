@@ -62,12 +62,11 @@ java {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8)) // Gradle utilise JDK 17
+        languageVersion.set(JavaLanguageVersion.of(8))
     }
 }
 
 tasks.withType<JavaCompile> {
-    // On cible Java 8 pour la compatibilité du bytecode
     sourceCompatibility = JavaVersion.VERSION_1_8.toString()
     targetCompatibility = JavaVersion.VERSION_1_8.toString()
 
