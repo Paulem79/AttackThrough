@@ -71,6 +71,7 @@ public final class AttackThrough extends JavaPlugin implements Listener {
             if(result == null) return;
 
             Entity hitEntity = result.getHitEntity();
+
             // If there is an entity behind the block, and it's not the player himself, attack it
             if (hitEntity != null && !hitEntity.equals(player))
             {
